@@ -227,13 +227,18 @@ async def generate_memories_callback(callback_context: CallbackContext):
     return None
 
 
-root_agent = Agent(
-    name="root_agent",
-    model=Gemini(
-        model=MODEL,
-        retry_options=types.HttpRetryOptions(attempts=3),
-    ),
-    instruction=(
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.schema.manager import A2uiSchemaManager
+
+from .a2ui_utils import a2ui_callback
+
+schema_manager = A2uiSchemaManager(
+    version="0.8",
+    catalogs=[BasicCatalog.get_config("0.8")],
+)
+
+a2ui_instruction = schema_manager.generate_system_prompt(
+    role_description=(
         "You are the Saint Joseph Family & Meal Organizer assistant. "
         "You help manage family schedules and preschool notices using your Firestore database tools (list_family_events, add_family_event), "
         "answer botanical or herbal questions grounded in Culpeper's Herbal using your retrieval tool (consult_herbal_corpus), "
@@ -243,6 +248,36 @@ root_agent = Agent(
         "You remember the user's stated preferences, family details, and facts from previous conversations "
         "using your long-term memory to personalize all responses."
     ),
+    workflow_description="Analyze the request and return structured UI when appropriate.",
+    ui_description=(
+        "Keep every surface tiny and flat: ONE Card > ONE Column > a few Text rows. "
+        "Never nest a Card inside a Card. "
+        "Use ONLY these components: Card, Column, Row, Text, and Image. Do not use "
+        "Table or Heading (unsupported), or Buttons, actions, or forms (they do "
+        "nothing in adk web). "
+        "You may include one Image component, but only when you have a public https "
+        "URL for the image (for example the URL an image tool returns after uploading "
+        "to a public bucket). Set the Image url to that exact https link, for example "
+        '{"Image": {"url": {"literalString": "https://..."}}}. Never point an '
+        "Image at a bare filename, an artifact name, or a non-http(s) path. If you do "
+        "not have a public URL, add a short Text line noting the image instead. "
+        "No markdown in text; use the usageHint property ('h1', 'h2', 'body') for "
+        "headings and emphasis. "
+        "Output ONLY the raw A2UI JSON array — no prose, and never wrap it in "
+        "<a2a_datapart_json> tags or 'kind'/'data'/'metadata' objects."
+    ),
+    include_schema=True,
+    include_examples=True,
+)
+
+
+root_agent = Agent(
+    name="root_agent",
+    model=Gemini(
+        model=MODEL,
+        retry_options=types.HttpRetryOptions(attempts=3),
+    ),
+    instruction=a2ui_instruction,
     tools=[
         PreloadMemoryTool(),
         list_family_events,
@@ -252,6 +287,7 @@ root_agent = Agent(
         get_weather,
         get_current_time,
     ],
+    after_model_callback=a2ui_callback,
     after_agent_callback=generate_memories_callback,
 )
 
