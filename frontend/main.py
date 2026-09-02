@@ -109,8 +109,15 @@ async def _get_card(client: httpx.AsyncClient) -> AgentCard:
 
             card = AgentCard()
             ParseDict(resp.json(), card, ignore_unknown_fields=True)
-        for interface in card.supported_interfaces:
-            interface.url = A2A_BASE
+        
+        if hasattr(card, "supported_interfaces") and getattr(card, "supported_interfaces", None):
+            for interface in card.supported_interfaces:
+                interface.url = A2A_BASE
+        elif hasattr(card, "url"):
+            try:
+                card.url = A2A_BASE
+            except AttributeError:
+                pass
         _card = card
     return _card
 
