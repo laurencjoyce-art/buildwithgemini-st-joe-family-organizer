@@ -449,6 +449,46 @@
       margin: 0.5in;
     }
   }
+  /* 90s Interactive Refrigerator Magnets Bar */
+  #fridge-magnets {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .magnet {
+    border: 2px solid rgba(0,0,0,0.15);
+    border-radius: 20px;
+    padding: 0.45rem 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2b1f1a;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.12), inset 0 2px 0 rgba(255,255,255,0.6);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    user-select: none;
+  }
+
+  .magnet:nth-child(1) { background: #fdf6e2; transform: rotate(-0.8deg); }
+  .magnet:nth-child(2) { background: #fff59d; transform: rotate(1deg); }
+  .magnet:nth-child(3) { background: #a5d6a7; transform: rotate(-0.5deg); }
+  .magnet:nth-child(4) { background: #80deea; transform: rotate(0.8deg); }
+  .magnet:nth-child(5) { background: #ce93d8; transform: rotate(-0.6deg); }
+
+  .magnet:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.18), inset 0 2px 0 rgba(255,255,255,0.8);
+    filter: brightness(1.03);
+  }
+
+  .magnet.active {
+    outline: 2px solid var(--accent);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
 </style>
 </head>
 <body>
@@ -462,6 +502,13 @@
 </header>
 
 <div id="main-container">
+  <div id="fridge-magnets">
+    <button type="button" class="magnet active" onclick="clickMagnet(this, '📌 All Notes')">📌 All Notes</button>
+    <button type="button" class="magnet" onclick="clickMagnet(this, '🎒 Piper\'s Preschool (The Eddy)')">🎒 Piper's Preschool (The Eddy)</button>
+    <button type="button" class="magnet" onclick="clickMagnet(this, '🥦 Toddler Hidden-Veggie Meals')">🥦 Toddler Hidden-Veggie Meals</button>
+    <button type="button" class="magnet" onclick="clickMagnet(this, '🎡 St. Joe Local Events')">🎡 St. Joe Local Events</button>
+    <button type="button" class="magnet" onclick="clickMagnet(this, '🌿 Culpeper Herbal Advice')">🌿 Culpeper Herbal Advice</button>
+  </div>
   <div id="board"></div>
   <div id="example-prompts">
     <button type="button" class="prompt-chip" onclick="sendExample('📅 What events are coming up for Piper & the family?')">📅 What events are coming up for Piper & the family?</button>
@@ -543,6 +590,23 @@ function closePrintModal() {
 
 function escapeHtml(str) {
   return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function clickMagnet(btn, category) {
+  document.querySelectorAll('.magnet').forEach(m => m.classList.remove('active'));
+  btn.classList.add('active');
+  
+  if (category.includes('Preschool')) {
+    sendExample('What are the latest preschool notices and schedule for Piper at The Eddy?');
+  } else if (category.includes('Veggie')) {
+    sendExample('Suggest a toddler-friendly meal with hidden veggies for Piper');
+  } else if (category.includes('Local Events')) {
+    sendExample('What toddler-friendly events are happening in St. Joe, like Movies in the Park or Farmers Market?');
+  } else if (category.includes('Culpeper')) {
+    sendExample('What does Culpeper\'s Herbal advise for toddler wellness and soothing teas?');
+  } else {
+    sendExample('List all upcoming family notes, events, and preschool schedule from Firestore');
+  }
 }
 
 function sendExample(promptText) {
