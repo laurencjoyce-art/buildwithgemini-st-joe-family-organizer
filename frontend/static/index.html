@@ -3,53 +3,265 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent</title>
-<!-- Optional: used only to draw A2UI Icon components. If it can't load (offline/
-     corp network), icons fall back to showing their name as text. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+<title>Saint Joseph Family & Meal Organizer</title>
+<!-- Google Fonts for 90s Nostalgic Hand-drawn & Retro feel -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comic+Neue:wght@400;700&family=Outfit:wght@400;600;700&family=Material+Symbols+Outlined&display=swap">
 <style>
-  :root { --accent:#1a73e8; --bg:#f6f8fa; --border:#dfe3e8; }
+  :root {
+    --accent: #d9534f;         /* 90s warm crimson/terracotta accent */
+    --teal-accent: #2e8b57;    /* 90s teal green */
+    --postit-yellow: #fff89a;  /* Classic 90s Yellow Sticky Note */
+    --postit-pink: #ffd1dc;    /* 90s Pastel Pink Sticky Note */
+    --postit-cyan: #e0f7fa;    /* 90s Pastel Cyan Sticky Note */
+    --bg-wood: #f3ebd8;        /* Soft warm 90s oak/cork home background */
+    --border: #d4c5b0;
+    --text-dark: #2c2523;
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,sans-serif; background:var(--bg); display:flex; flex-direction:column; height:100vh; }
-  header { background:var(--accent); color:#fff; padding:.9rem 1.2rem; font-weight:700; }
-  #log { flex:1; overflow-y:auto; padding:1.2rem; max-width:780px; width:100%; margin:0 auto; }
-  .msg { margin:.6rem 0; }
-  .msg.user { text-align:right; }
-  .bubble { display:inline-block; padding:.6rem .9rem; border-radius:12px; background:#fff; border:1px solid var(--border); text-align:left; max-width:90%; white-space:pre-wrap; }
-  .msg.user .bubble { background:var(--accent); color:#fff; border:none; }
-  /* When the reply is an A2UI card, drop the bubble chrome so the card stands alone. */
-  .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; }
-  form { display:flex; gap:.5rem; padding:1rem; border-top:1px solid var(--border); background:#fff; }
-  input { flex:1; padding:.7rem; border:1px solid var(--border); border-radius:8px; font-size:1rem; }
-  button { padding:.7rem 1.1rem; border:none; border-radius:8px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; }
+  
+  body {
+    margin: 0;
+    font-family: 'Comic Neue', 'Outfit', system-ui, sans-serif;
+    background-color: var(--bg-wood);
+    background-image: 
+      radial-gradient(#d8c9b3 1.5px, transparent 1.5px),
+      radial-gradient(#d8c9b3 1.5px, #f3ebd8 1.5px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    color: var(--text-dark);
+  }
 
-  /* --- A2UI component styles (Card, Column, Row, Text, Divider, List, Image, Icon) --- */
-  .a2card { border:1px solid var(--border); border-radius:12px; padding:1rem; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.06); max-width:100%; }
-  .a2card + .a2card, .a2col > .a2card { margin-top:.6rem; }
-  .a2col { display:flex; flex-direction:column; gap:.4rem; }
-  .a2row { display:flex; flex-direction:row; gap:.6rem; align-items:center; flex-wrap:wrap; }
-  .a2row.between { justify-content:space-between; }
-  .a2text { margin:0; line-height:1.4; }
-  .a2text.a2-h1 { font-size:1.5rem; font-weight:700; }
-  .a2text.a2-h2 { font-size:1.25rem; font-weight:700; }
-  .a2text.a2-h3 { font-size:1.1rem; font-weight:600; }
-  .a2text.a2-h4 { font-size:1rem; font-weight:600; }
-  .a2text.a2-caption { font-size:.85rem; color:#666; }
-  .a2divider { border:none; border-top:1px solid var(--border); margin:.4rem 0; width:100%; }
-  .a2img { max-width:100%; border-radius:8px; display:block; }
-  .material-symbols-outlined { font-family:'Material Symbols Outlined'; font-size:1.25rem; line-height:1; vertical-align:middle; color:var(--accent); }
+  /* 90s TV Family sitcom banner */
+  header {
+    background: linear-gradient(135deg, #d9534f 0%, #ff7b54 50%, #f4c430 100%);
+    color: #fff;
+    padding: 1.1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.4rem;
+    font-family: 'Outfit', sans-serif;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-bottom: 4px solid #b23b38;
+  }
+
+  header .subtitle {
+    font-size: 0.85rem;
+    font-weight: 400;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    font-family: 'Caveat', cursive;
+    font-size: 1.2rem;
+  }
+
+  #main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 1rem;
+  }
+
+  /* Corkboard / Refrigerator Board container */
+  #board {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem;
+    background: #fffdf5;
+    border: 3px dashed #d1c0a5;
+    border-radius: 16px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.06), 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .msg {
+    margin: 1.2rem 0;
+    position: relative;
+  }
+
+  .msg.user {
+    text-align: right;
+  }
+
+  /* Sticky Post-it note design for User */
+  .msg.user .bubble {
+    display: inline-block;
+    background: var(--postit-pink);
+    color: #2b1f24;
+    padding: 0.9rem 1.3rem;
+    border-radius: 2px 2px 18px 2px;
+    font-family: 'Caveat', cursive;
+    font-size: 1.35rem;
+    font-weight: 700;
+    border-left: 4px solid #f48fb1;
+    box-shadow: 3px 5px 12px rgba(0,0,0,0.12);
+    transform: rotate(1.2deg);
+    max-width: 85%;
+    text-align: left;
+    white-space: pre-wrap;
+    position: relative;
+  }
+
+  /* Tape strip on top of user post-it */
+  .msg.user .bubble::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 25px;
+    width: 50px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(210, 210, 210, 0.5);
+    transform: rotate(-3deg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* Sticky Post-it note design for Agent */
+  .msg.agent .bubble {
+    display: inline-block;
+    background: var(--postit-yellow);
+    color: var(--text-dark);
+    padding: 1.1rem 1.4rem;
+    border-radius: 2px 2px 22px 2px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    border-left: 5px solid #e6c841;
+    box-shadow: 4px 6px 14px rgba(0,0,0,0.14);
+    transform: rotate(-0.8deg);
+    max-width: 92%;
+    text-align: left;
+    white-space: pre-wrap;
+    position: relative;
+  }
+
+  /* Tape strip on top of agent post-it */
+  .msg.agent .bubble::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    width: 60px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(210, 210, 210, 0.5);
+    transform: rotate(2deg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .bubble.rich {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .bubble.rich::before { display: none !important; }
+
+  /* Bottom 90s control panel */
+  form {
+    display: flex;
+    gap: 0.8rem;
+    padding: 1rem;
+    background: #fcf8ee;
+    border: 2px solid #e2d3bf;
+    border-radius: 12px;
+    margin-top: 0.8rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+
+  input {
+    flex: 1;
+    padding: 0.8rem 1.1rem;
+    border: 2px solid #d8caad;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-family: 'Comic Neue', sans-serif;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+  }
+
+  button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d9534f 0%, #ff7b54 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(217, 83, 79, 0.3);
+    transition: transform 0.1s, box-shadow 0.2s;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(217, 83, 79, 0.4);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  /* A2UI Component Styles in 90s Post-it aesthetic */
+  .a2card {
+    border: 2px solid #e0c98f;
+    border-radius: 2px 2px 20px 2px;
+    padding: 1.2rem;
+    background: var(--postit-cyan);
+    box-shadow: 3px 5px 12px rgba(0,0,0,0.1);
+    max-width: 100%;
+    transform: rotate(0.4deg);
+    margin-top: 0.8rem;
+  }
+  .a2card + .a2card, .a2col > .a2card { margin-top: 0.8rem; }
+  .a2col { display: flex; flex-direction: column; gap: 0.5rem; }
+  .a2row { display: flex; flex-direction: row; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+  .a2row.between { justify-content: space-between; }
+  .a2text { margin: 0; line-height: 1.5; font-family: 'Comic Neue', sans-serif; }
+  .a2text.a2-h1 { font-size: 1.6rem; font-weight: 700; color: #1e5245; font-family: 'Outfit', sans-serif; }
+  .a2text.a2-h2 { font-size: 1.35rem; font-weight: 700; color: #235a48; }
+  .a2text.a2-h3 { font-size: 1.15rem; font-weight: 700; color: #2d6857; }
+  .a2text.a2-h4 { font-size: 1.05rem; font-weight: 600; }
+  .a2text.a2-caption { font-size: 0.9rem; color: #557065; }
+  .a2divider { border: none; border-top: 2px dashed #a1d6ce; margin: 0.6rem 0; width: 100%; }
+  .a2img { max-width: 100%; border-radius: 10px; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.12); display: block; }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 1.35rem; line-height: 1; vertical-align: middle; color: var(--accent); }
 </style>
 </head>
 <body>
-<header>Your Agent</header>
-<div id="log"></div>
-<form id="form">
-  <input id="input" placeholder="Ask something…" autocomplete="off" autofocus>
-  <button>Send</button>
-</form>
+
+<header>
+  <div>🏠 St. Joe Family & Meal Organizer</div>
+  <div class="subtitle">Piper's 90's Kitchen Calendar 📌</div>
+</header>
+
+<div id="main-container">
+  <div id="board"></div>
+  <form id="form">
+    <input id="input" placeholder="Ask about Piper's schedule, hidden-veggie meals, St. Joe events..." autocomplete="off" autofocus>
+    <button>Send 📌</button>
+  </form>
+</div>
 
 <script>
-const log = document.getElementById("log");
+const board = document.getElementById("board");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
 
@@ -58,18 +270,10 @@ function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.
 function bubble(who) {
   const m = el("div", "msg " + who);
   const b = el("div", "bubble");
-  m.appendChild(b); log.appendChild(m); log.scrollTop = log.scrollHeight;
+  m.appendChild(b); board.appendChild(m); board.scrollTop = board.scrollHeight;
   return b;
 }
 
-/* ----------------------------------------------------------------------------
- * A2UI mini-renderer (v0.8 Basic Catalog subset).
- * Renders Card / Column / Row / Text / Divider / List / Image / Icon.
- * Anything else falls back to plain text (see renderReply). All text goes in via
- * textContent and image URLs are validated, so agent output can't inject HTML.
- * -------------------------------------------------------------------------- */
-
-// A "bound value" is usually {literalString: "..."}; we only support literals.
 function boundStr(v) {
   if (v == null) return "";
   if (typeof v === "string") return v;
@@ -77,7 +281,6 @@ function boundStr(v) {
   return "";
 }
 
-// child ids of a component's props: single `child` and/or `children.explicitList`.
 function childIds(props) {
   const ids = [];
   if (props && typeof props.child === "string") ids.push(props.child);
@@ -86,11 +289,10 @@ function childIds(props) {
   return ids;
 }
 
-// A2UI icon names are camelCase (locationOn); Material Symbols wants snake_case.
 function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
 
 function buildNode(id, comps, seen) {
-  if (!id || seen.has(id)) return null;   // missing / cycle guard
+  if (!id || seen.has(id)) return null;
   seen.add(id);
   const spec = comps[id];
   if (!spec || typeof spec !== "object") return null;
@@ -123,19 +325,17 @@ function buildNode(id, comps, seen) {
       return el("hr", "a2divider");
     case "Image": {
       const src = boundStr(props.url || props.src);
-      if (!/^https?:\/\//i.test(src)) return null;   // only allow safe URLs
+      if (!/^https?:\/\//i.test(src)) return null;
       const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
     }
     case "Icon": {
       const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
     }
     default:
-      return null;   // unknown component -> skipped (text fallback covers content)
+      return null;
   }
 }
 
-// Render one or more A2UI messages (beginRendering + surfaceUpdate) into `container`.
-// Returns true if anything was drawn.
 function renderSurface(messages, container) {
   const comps = {};
   const roots = [];
@@ -145,7 +345,7 @@ function renderSurface(messages, container) {
     if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
   }
   let rootIds = roots.filter(r => comps[r]);
-  if (rootIds.length === 0) {   // no valid root given -> infer un-referenced components
+  if (rootIds.length === 0) {
     const referenced = new Set();
     for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
     rootIds = Object.keys(comps).filter(id => !referenced.has(id));
@@ -155,7 +355,6 @@ function renderSurface(messages, container) {
   return drew;
 }
 
-// Fallback: pull every Text value out of the messages as plain text.
 function flattenText(messages) {
   const out = [];
   for (const m of messages) {
@@ -166,7 +365,7 @@ function flattenText(messages) {
 }
 
 function renderReply(b, parts) {
-  b.textContent = "";   // clear the "…" placeholder
+  b.textContent = "";
   const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
   const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
 
@@ -178,10 +377,9 @@ function renderReply(b, parts) {
     if (!renderSurface(a2ui, b)) b.appendChild(el("div", null, flattenText(a2ui) || "(no card content)"));
   }
   if (!b.childNodes.length) b.textContent = "(no response)";
-  log.scrollTop = log.scrollHeight;
+  board.scrollTop = board.scrollHeight;
 }
 
-// The proxy returns { parts: [{kind:"text",text} | {kind:"a2ui",data}] }.
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const text = input.value.trim();
@@ -191,9 +389,6 @@ form.addEventListener("submit", async (ev) => {
   const b = bubble("agent"); b.textContent = "…";
   try {
     const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
-    // Read as text first, then parse. If the proxy ever returns a non-JSON error
-    // page (e.g. a plain "Internal Server Error"), show that body instead of a
-    // cryptic "Unexpected token" JSON error.
     const raw = await res.text();
     let data;
     try { data = JSON.parse(raw); }
