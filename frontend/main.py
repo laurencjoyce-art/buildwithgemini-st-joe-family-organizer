@@ -190,7 +190,10 @@ async def chat(req: Request):
                 parts=[Part(text=message)],
                 context_id=ctx_id,
             )
-        send_req = SendMessageRequest(message=msg)
+        try:
+            send_req = SendMessageRequest(message=msg)
+        except Exception:
+            send_req = SendMessageRequest(id=str(uuid.uuid4()), params=msg)
 
         async for event in a2a_client.send_message(send_req):
             if event.HasField("task"):
