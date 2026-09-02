@@ -176,9 +176,10 @@ async def chat(req: Request):
         a2a_client = factory.create(card)
 
         ctx_id = _contexts.get(user_id, "")
+        role_user = getattr(Role, "ROLE_USER", 1)
         msg = Message(
             message_id=str(uuid.uuid4()),
-            role=Role.ROLE_USER,
+            role=role_user,
             parts=[Part(text=message)],
             context_id=ctx_id,
         )
