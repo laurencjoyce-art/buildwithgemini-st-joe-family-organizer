@@ -193,7 +193,11 @@ async def chat(req: Request):
         try:
             send_req = SendMessageRequest(message=msg)
         except Exception:
-            send_req = SendMessageRequest(id=str(uuid.uuid4()), params=msg)
+            try:
+                from a2a.types import MessageSendParams
+                send_req = SendMessageRequest(id=str(uuid.uuid4()), params=MessageSendParams(message=msg))
+            except Exception:
+                send_req = SendMessageRequest(id=str(uuid.uuid4()), params={"message": msg})
 
         async for event in a2a_client.send_message(send_req):
             if event.HasField("task"):
