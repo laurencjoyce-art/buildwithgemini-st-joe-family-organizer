@@ -84,12 +84,60 @@
   }
 
   .msg {
-    margin: 1.2rem 0;
+    margin: 1.4rem 0;
     position: relative;
+    animation: postitPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
-  .msg.user {
-    text-align: right;
+  @keyframes postitPop {
+    0% { opacity: 0; transform: translateY(12px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .msg-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .msg.user .msg-header {
+    justify-content: flex-end;
+  }
+
+  .msg.agent .msg-header {
+    justify-content: flex-start;
+  }
+
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .avatar.user-avatar {
+    background: #ffb74d;
+    color: #3e2723;
+    border: 1px solid #f57c00;
+  }
+
+  .avatar.agent-avatar {
+    background: #4db6ac;
+    color: #004d40;
+    border: 1px solid #00897b;
+  }
+
+  .time-tag {
+    font-size: 0.78rem;
+    color: #8d7b68;
+    font-family: 'Caveat', cursive;
   }
 
   /* Sticky Post-it note design for User */
@@ -313,8 +361,26 @@ function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.
 
 function bubble(who) {
   const m = el("div", "msg " + who);
+  const hdr = el("div", "msg-header");
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  if (who === "user") {
+    const timeTag = el("span", "time-tag", timeStr);
+    const avatar = el("span", "avatar user-avatar", "📝 Family Note");
+    hdr.appendChild(timeTag);
+    hdr.appendChild(avatar);
+  } else {
+    const avatar = el("span", "avatar agent-avatar", "🏠 St. Joe Organizer");
+    const timeTag = el("span", "time-tag", timeStr);
+    hdr.appendChild(avatar);
+    hdr.appendChild(timeTag);
+  }
+  
   const b = el("div", "bubble");
-  m.appendChild(b); board.appendChild(m); board.scrollTop = board.scrollHeight;
+  m.appendChild(hdr);
+  m.appendChild(b);
+  board.appendChild(m);
+  board.scrollTop = board.scrollHeight;
   return b;
 }
 
@@ -423,6 +489,12 @@ function renderReply(b, parts) {
   if (!b.childNodes.length) b.textContent = "(no response)";
   board.scrollTop = board.scrollHeight;
 }
+
+// Initial welcome post-it note on page load
+(function initWelcome() {
+  const b = bubble("agent");
+  b.innerHTML = "📌 <strong>Welcome to the Tanner Family Kitchen Board!</strong><br>I'm your St. Joe Family & Meal Organizer. I keep track of Piper's preschool schedule, hidden-veggie toddler recipes, St. Joe community activities, and Culpeper's herbal remedies.<br><br><em>Click an example prompt below or leave a note!</em>";
+})();
 
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
