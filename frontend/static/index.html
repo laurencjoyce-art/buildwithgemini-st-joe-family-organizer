@@ -489,14 +489,78 @@
     outline: 2px solid var(--accent);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 -2px 0 rgba(0,0,0,0.15);
   }
+  /* Retro 90s Flip Calendar & Weather Counter Badges */
+  .kitchen-widgets {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .flip-calendar-badge {
+    background: #1e1e1e;
+    color: #fff;
+    border: 2px solid #333;
+    border-radius: 6px;
+    padding: 0.25rem 0.65rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+    letter-spacing: 0.5px;
+  }
+
+  .flip-calendar-badge::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: rgba(0,0,0,0.6);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .flip-day {
+    color: #ffca28;
+    text-transform: uppercase;
+  }
+
+  .flip-date {
+    color: #ffffff;
+  }
+
+  .weather-badge {
+    background: #fff8e1;
+    color: #3e2723;
+    border: 2px solid #ffe082;
+    border-radius: 6px;
+    padding: 0.25rem 0.65rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div>🏠 St. Joe Family & Meal Organizer</div>
-  <div style="display: flex; align-items: center; gap: 0.8rem;">
-    <div class="subtitle">Piper's 90's Kitchen Calendar 📌</div>
+  <div class="kitchen-widgets">
+    <div class="flip-calendar-badge">
+      <span class="flip-day" id="flip-day">THU</span>
+      <span class="flip-date" id="flip-date">SEP 3</span>
+    </div>
+    <div class="weather-badge">
+      <span>☀️</span>
+      <span>St. Joseph 72°F</span>
+    </div>
     <button type="button" class="print-header-btn" onclick="printCalendar()">Print Kitchen Calendar 🖨️</button>
   </div>
 </header>
@@ -746,6 +810,22 @@ function renderReply(b, parts) {
   if (!b.childNodes.length) b.textContent = "(no response)";
   board.scrollTop = board.scrollHeight;
 }
+
+(function updateFlipDate() {
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const now = new Date();
+  const dayName = days[now.getDay()];
+  const monthName = months[now.getMonth()];
+  const dateNum = now.getDate();
+  
+  const elDay = document.getElementById('flip-day');
+  const elDate = document.getElementById('flip-date');
+  if (elDay && elDate) {
+    elDay.textContent = dayName;
+    elDate.textContent = `${monthName} ${dateNum}`;
+  }
+})();
 
 // Initial welcome post-it note on page load
 (function initWelcome() {
